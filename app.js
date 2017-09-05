@@ -12,12 +12,12 @@ var handlebars = require("express-handlebars")
 
 app.engine("handlebars", handlebars({defaultLayout: "main"}));
 app.set("view engine", "handlebars")
-app.use(require("body parser").urlencoded({
+app.use(require("body-parser").urlencoded({
 	extended: true}));
-}));
 
-var credentials = require('/credentials.js');
-app.use(require('cookie-parser')credentials.cookieSecret));
+
+var credentials = require('./credentials.js');
+app.use(require('cookie-parser')(credentials.cookieSecret)); 
 
 var formidable = require("formidable")
 
@@ -43,9 +43,15 @@ app.use(function(err, req, res, next){
 	res.render("500");
 })
 
+
+
 app.get("/contact", function(req, res){
-	res.render("contact")
+	res.render("contact", {csrf: 'CSRF token here'})
 });
+
+app.get('/thankyou', function(req, res){
+	res.render("thankyou")
+})
 
 app.set("port", process.env.PORT || 3001)
 

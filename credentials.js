@@ -1,1 +1,1 @@
-module.exports = {cookieSecret : "force ability luke father"}
+module.exports = {cookieSecret : "force ability luke father",}
