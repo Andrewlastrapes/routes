@@ -7,6 +7,7 @@
 var express = require("express");
 var app = express();
 var handlebars = require("express-handlebars")
+var mongoose = require("mongoose")
 
 // .create({defaultLayout:"main"});
 
@@ -30,6 +31,47 @@ app.get("/about", function(req, res){
 	res.render("about")
 })
 
+
+mongoose.connect("mongodb://127.0.0.1:27017/newData")
+var Schema = mongoose.Schema;
+var userDataSchema = new Schema ({
+	title: String,
+	content: String,
+	author: String
+});
+
+
+var UserData = mongoose.model('UserData', userDataSchema);
+
+
+app.get("/get-data", function(req, res, next){
+	UserData.find()
+		.then(function(doc){
+			res.render("users", {items : doc});
+		});
+});
+
+app.post("/insert", function(req, res, next){
+	var item = {
+		title: req.body.title,
+		content: req.body.content,
+		author: req.body.author
+	}
+})
+
+
+app.post("/get-data", function(req, res, next){
+	var items = {
+		title: req.body.title,
+		content: req.body.content,
+		author: req.body.author
+	}
+	var data = new UserData(item)
+	data.save();
+	res.redirect('/')
+
+
+})
 
 app.get("/contact", function(req, res){
 	res.render("contact", {csrf: 'CSRF token here'});
@@ -97,8 +139,7 @@ app.use(function(err, req, res, next){
 
 
 
-
-app.set("port", process.env.PORT || 3001)
+app.set("port", process.env.PORT || 3005)
 
 app.use(express.static(__dirname + "../public"));
 
